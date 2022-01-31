@@ -39,4 +39,4 @@ def show_map(ll_spn=None, map_type="map", add_params=None):
     os.remove(map_file)
 
 
-show_map(ll_spn=f'll={c[1]},{c[0]}')
+show_map(ll_spn=f'll={c[0]},{c[1]}')
