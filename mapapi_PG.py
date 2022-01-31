@@ -41,7 +41,7 @@ while pygame.event.wait().type != pygame.QUIT:
             zoom[0] += 0.4
         elif event.key == pygame.K_PAGEDOWN and zoom[0] > 0.4:
             zoom[0] -= 0.4
-    map_file = show_map(ll_spn=f'll={c[1]},{c[0]}', z=f'{zoom[0]},{zoom[1]}')
+    map_file = show_map(ll_spn=f'll={c[0]},{c[1]}', z=f'{zoom[0]},{zoom[1]}')
     screen.blit(pygame.image.load(map_file), (0, 0))
     pygame.display.flip()
 pygame.quit()
