@@ -3,7 +3,7 @@ import os
 import sys
 import pygame
 
-c = input('Введите координаты: ').split(', ')
+c = input('' + '\n' + 'Пример ввода: 49.422, 53.51' + '\n' + 'Введите свои координаты: ').split(', ')
 
 
 def show_map(ll_spn=None, map_type="map", add_params=None, z='0.004,0.0019'):
@@ -31,25 +31,28 @@ def show_map(ll_spn=None, map_type="map", add_params=None, z='0.004,0.0019'):
 pygame.init()
 screen = pygame.display.set_mode((600, 450))
 pygame.display.set_caption('Map')
-zoom = [1.51, 0]
-q = 1
+zoom = [0.0065 * 8, 0]
+q = 4
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
             running = False
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_w and zoom[0] < 50:
+
+            if event.key == pygame.K_PAGEUP and q != 15:
                 q += 1
-                zoom[0] += 0.5 * q
-                print(q, zoom[0])
-            elif event.key == pygame.K_s and zoom[0] > 0.01 and q != 1:
-                zoom[0] -= 0.5 * q
+                zoom[0] *= 2
+            elif event.key == pygame.K_PAGEDOWN and q != 1:
+                zoom[0] /= 2
                 q -= 1
-                print(q, zoom[0])
+
         map_file = show_map(ll_spn=f'll={c[0]},{c[1]}', z=f'{zoom[0]},{zoom[1]}')
         screen.blit(pygame.image.load(map_file), (0, 0))
         pygame.display.flip()
 pygame.quit()
 os.remove(map_file)
-# 133.795, -25.695
+
+# Примеры ввода:
+# 133.795, -25.695    Австралия
+# 49.422, 53.51       Тольятти
