@@ -21,6 +21,7 @@ if read == '1':
               'PageUP и PageDOWN - изменить масштаб' + '\n' + 'TAB - изменить тип карты' + '\n' +
               'Стрелки - перемещение на карте\n' +
               'Для поиска объекта введите его нaзвание в поле и нажмите ENTER' +
+              '\nЧтобы сбросить метку, нажмите СБРОС' +
               '\n' + '' + '\n' + 'Пример ввода: 53.5099, 49.4188' + '\n' + '' + '\n' +
               'Введите свои координаты: ').split(', ')
 else:
@@ -28,10 +29,42 @@ else:
               'ПЛЮС и МИНУС - изменить масштаб' + '\n' + 'TAB - изменить тип карты' + '\n' +
               'Стрелки - перемещение на карте' +
               'Для поиска объекта введите его нaзвание в поле и нажмите ENTER\n' +
+              'Чтобы сбросить метку, нажмите СБРОС' +
               '\n' + '' + '\n' + 'Пример ввода: 53.5099, 49.4188' + '\n' + '' + '\n' +
               'Введите свои координаты: ').split(', ')
 
 c_flag = c[:]
+
+
+class Button:
+    def __init__(self, text, x=0, y=0, width=30, height=30):
+        self.text = text
+        self.image_normal = pygame.Surface((width, height))
+        self.image_normal.fill((255, 180, 51))
+        self.image_hovered = pygame.Surface((width, height))
+        self.image_hovered.fill('grey')
+        self.image = self.image_normal
+        self.rect = self.image.get_rect()
+
+        font = pygame.font.SysFont('Arial', 20)
+
+        text_image = font.render(text, True, 'black')
+        text_rect = text_image.get_rect(center=self.rect.center)
+
+        self.image_normal.blit(text_image, text_rect)
+        self.image_hovered.blit(text_image, text_rect)
+        self.rect.topleft = (x, y)
+
+        self.hovered = False
+
+    def update(self):
+        if self.hovered:
+            self.image = self.image_hovered
+        else:
+            self.image = self.image_normal
+
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
 
 
 def show_map(ll_spn=None, map_type="map", add_params=None, z='0.004,0.0019'):
@@ -66,9 +99,11 @@ font = pygame.font.Font(None, 32)
 clock = pygame.time.Clock()
 input_box = pygame.Rect(0, 0, 140, 32)
 color_inactive = pygame.Color('lightblue')
+btn1 = Button('СБРОС', 0, 33, 80, 40)
 color_active = pygame.Color('blue')
 color = color_inactive
 active = False
+df = False
 text = ''
 running = True
 while running:
@@ -120,7 +155,11 @@ while running:
                     type = 'sat,skl'
                 elif type == 'sat,skl':
                     type = 'map'
+        if event.type == pygame.MOUSEMOTION:
+            btn1.hovered = btn1.rect.collidepoint(event.pos)
         if event.type == pygame.MOUSEBUTTONDOWN:
+            if btn1.hovered:
+                df = True
             if input_box.collidepoint(event.pos):
                 active = not active
             else:
@@ -137,17 +176,23 @@ while running:
                     c = list(get_coordinates(text))
                     c_flag = c[:]
                     text = ''
+                    df = False
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                 else:
                     text += event.unicode
 
-        map_file = show_map(ll_spn=f'll={c[1]},{c[0]}', z=f'{zoom[0]},{zoom[1]}', map_type=type,
-                            add_params=f'pt={c_flag[1]},{c_flag[0]},flag')
+        if df:
+            map_file = show_map(ll_spn=f'll={c[1]},{c[0]}', z=f'{zoom[0]},{zoom[1]}', map_type=type)
+        else:
+            map_file = show_map(ll_spn=f'll={c[1]},{c[0]}', z=f'{zoom[0]},{zoom[1]}', map_type=type,
+                                add_params=f'pt={c_flag[1]},{c_flag[0]},flag')
         screen.blit(pygame.image.load(map_file), (0, 0))
         txt_surface = font.render(text, True, color)
         width = max(200, txt_surface.get_width() + 10)
         input_box.w = width
+        btn1.update()
+        btn1.draw(screen)
         screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
         pygame.draw.rect(screen, color, input_box, 2)
         pygame.display.flip()
