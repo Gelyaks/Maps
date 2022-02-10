@@ -33,19 +33,19 @@ screen = pygame.display.set_mode((600, 450))
 pygame.display.set_caption('Map')
 zoom = [0.004, 0.0019]
 while pygame.event.wait().type != pygame.QUIT:
+    map_file = show_map(ll_spn=f'll={c[1]},{c[0]}', z=f'{zoom[0]},{zoom[1]}')
     event = pygame.event.wait()
-    if event.type == pygame.QUIT:
-        break
     if event.type == pygame.KEYUP:
-        if event.key == pygame.K_PAGEUP and zoom[0] < 7:
-            zoom[0] += 0.4
-        elif event.key == pygame.K_PAGEDOWN and zoom[0] > 0.4:
-            zoom[0] -= 0.4
-    map_file = show_map(ll_spn=f'll={c[0]},{c[1]}', z=f'{zoom[0]},{zoom[1]}')
+        if event.key == 280 and zoom[0] < 10:
+            zoom[0] += 0.01
+            zoom[1] += 0.01
+        elif event.key == 281 and zoom[0] > 0.001:
+            zoom[0] -= 0.01
+            zoom[1] += 0.01
     screen.blit(pygame.image.load(map_file), (0, 0))
     pygame.display.flip()
 pygame.quit()
+
 os.remove(map_file)
 # 55.859564, 37.443721
-
 

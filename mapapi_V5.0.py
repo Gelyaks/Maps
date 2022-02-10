@@ -115,21 +115,26 @@ while running:
                 if event.key == pygame.K_PAGEUP and q != 15:
                     q += 1
                     zoom[0] *= 2
+                    zoom[1] *= 2
                 elif event.key == pygame.K_PAGEDOWN and q != 1:
                     zoom[0] /= 2
+                    zoom[1] /= 2
                     q -= 1
             else:
                 if event.key == pygame.K_MINUS and q != 15:
                     q += 1
                     zoom[0] *= 2
+                    zoom[1] *= 2
                 elif event.key == pygame.K_EQUALS and q != 1:
                     zoom[0] /= 2
+                    zoom[1] /= 2
                     q -= 1
 
             if event.key == pygame.K_UP:
                 if float(c[0]) + zoom[0] / 4 > 80:
                     c[0] = '80'
                 else:
+                    print(0)
                     c[0] = str(float(c[0]) + zoom[0] / 4)
             elif event.key == pygame.K_DOWN:
                 if float(c[0]) - zoom[0] / 4 < -80:
@@ -170,9 +175,9 @@ while running:
                 if event.key == pygame.K_RETURN:
                     if text[-1] in '1234567890':
                         zoom[1] = 0.0005
-                        zoom[0] = 0.0000164
+                        zoom[0] = 0.00164
                     else:
-                        zoom = [0.0065 * 8, 0]
+                        zoom = [0.0065 * 8, 0.00000001]
                     c = list(get_coordinates(text))
                     c_flag = c[:]
                     text = ''
